@@ -1,5 +1,7 @@
 package com.dorokhov.telegrambotm1;
 
+import com.dorokhov.telegrambotm1.Service.TelegramBot;
+import com.dorokhov.telegrambotm1.config.BotConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

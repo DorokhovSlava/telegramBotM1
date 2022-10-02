@@ -1,6 +1,7 @@
 package com.dorokhov.telegrambotm1.Service;
 
 import com.dorokhov.telegrambotm1.config.BotConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
+@Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
 
     final BotConfiguration configuration;
@@ -15,7 +17,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfiguration configuration) {
         this.configuration = configuration;
     }
-
 
     /**
      * @return register name
@@ -66,6 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         String answer = "Привет, " + userName + ", рад тебя видеть!";
 
         sendMessage(chatId, answer);
+        log.info("Message send to user: " + userName);
 
     }
 
@@ -78,7 +80,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Error occurred: " + e.getMessage());
         }
     }
 }
