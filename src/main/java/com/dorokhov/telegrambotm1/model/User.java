@@ -1,4 +1,7 @@
-package model;
+package com.dorokhov.telegrambotm1.model;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -6,6 +9,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
     @Id
@@ -31,43 +36,4 @@ public class User {
                 '}';
     }
 
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public Timestamp getRegisteredAt() {
-        return registeredAt;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setRegisteredAt(Timestamp registeredAt) {
-        this.registeredAt = registeredAt;
-    }
 }

@@ -3,10 +3,9 @@ package com.dorokhov.telegrambotm1.Service;
 import com.dorokhov.telegrambotm1.config.BotConfiguration;
 import com.dorokhov.telegrambotm1.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
+import com.dorokhov.telegrambotm1.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -21,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+@ComponentScan
 @Component
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
@@ -92,6 +92,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(chatId, HELP_TEXT);
                     break;
 
+                case "/mydata":
+                    getUserInfo(update.getMessage());
+                    break;
+
+                case "/deletedata":
+                    deleteUserInfo(update.getMessage());
+                    break;
+
                 default:
                     sendMessage(chatId, "Прошу прощения, команда пока не поддерживается");
             }
@@ -103,8 +111,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Method command register user before start
      */
     private void registerUser(Message msg) {
-
-        if (userRepository.findById(msg.getChatId()).isEmpty()){
+        if (userRepository.findById(msg.getChatId()).isEmpty()) {
             var chatId = msg.getChatId();
             var chat = msg.getChat();
 
@@ -116,27 +123,46 @@ public class TelegramBot extends TelegramLongPollingBot {
             user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
 
             userRepository.save(user);
-            log.info("user saved" + user.toString());
-
+            log.info("user saved" + user);
         }
-
     }
 
+    /**
+     * Method command myData. Get user info by user chatId
+     */
+    private void getUserInfo(Message msg) {
+        if (userRepository.findById(msg.getChatId()).isPresent()) {
+            String answer = userRepository.findById(msg.getChatId()).get().toString();
+            sendMessage(msg.getChatId(), answer);
+        }
+    }
+
+    /**
+     * Method command myData. Delete user info by user chatId
+     */
+    private void deleteUserInfo(Message msg) {
+        if (userRepository.findById(msg.getChatId()).isPresent()) {
+            userRepository.deleteById(msg.getChatId());
+            String answer = "Данные быди удалены";
+            sendMessage(msg.getChatId(), answer);
+            log.info("user chatId: " + msg.getChatId() + "is deleted");
+        }else {
+            String answer = "Данные не найдены";
+            sendMessage(msg.getChatId(), answer);
+            log.info("user info not found");
+        }
+    }
 
     /**
      * Method command start
      */
     private void startCommandReceived(long chatId, String userName) {
-
         String answer = "Привет, " + userName + ", рад тебя видеть!";
-
         sendMessage(chatId, answer);
         log.info("Message send to user: " + userName);
-
     }
 
     private void sendMessage(long chatId, String textMessage) {
-
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
