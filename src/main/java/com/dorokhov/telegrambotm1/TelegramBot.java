@@ -1,30 +1,24 @@
-package com.dorokhov.telegrambotm1.Service;
+package com.dorokhov.telegrambotm1;
 
 import com.dorokhov.telegrambotm1.config.BotConfiguration;
-import com.dorokhov.telegrambotm1.repositories.UserRepository;
+import com.dorokhov.telegrambotm1.service.BusInfoService;
+import com.dorokhov.telegrambotm1.service.UserService;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import com.dorokhov.telegrambotm1.model.User;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @ComponentScan
 @Component
@@ -32,7 +26,10 @@ import java.util.*;
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
+    @Autowired
+    private BusInfoService busInfoService;
 
     final BotConfiguration configuration;
 
@@ -46,6 +43,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             + "Выберите /bus24_balmoshnaya - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Балмошная»\n\n"
             + "Выберите /bus24_circus - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Цирк» \n\n";
 
+    @Autowired
     public TelegramBot(BotConfiguration configuration) {
         this.configuration = configuration;
 
@@ -97,7 +95,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             switch (messageText) {
 
                 case "/start":
-                    registerUser(update.getMessage());
+                    userService.registerUser(update.getMessage());
                     startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
                     break;
 
@@ -106,21 +104,23 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
 
                 case "/mydata":
-                    getUserInfo(update.getMessage());
+                    userService.getUserInfo(update.getMessage());
+                    sendMessage(update.getMessage().getChatId(), userService.getUserInfo(update.getMessage()));
                     break;
 
                 case "/deletedata":
-                    deleteUserInfo(update.getMessage());
+                    userService.deleteUserInfo(update.getMessage());
+                    sendMessage(update.getMessage().getChatId(), userService.deleteUserInfo(update.getMessage()));
                     break;
 
                 case "/bus24_balmoshnaya":
                     String urlBalm = "http://www.m.gortransperm.ru/time-table/24/108302";
-                    getBusInfoPage(update.getMessage(), urlBalm);
+                    sendMessage(update.getMessage().getChatId(), String.join("", busInfoService.getBusInfo(update.getMessage(), urlBalm)));
                     break;
 
                 case "/bus24_circus":
                     String urlCircus = "http://www.m.gortransperm.ru/time-table/24/8100";
-                    getBusInfoPage(update.getMessage(), urlCircus);
+                    sendMessage(update.getMessage().getChatId(), String.join("", busInfoService.getBusInfo(update.getMessage(), urlCircus)));
                     break;
 
                 default:
@@ -131,67 +131,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    /**
-     * Method return all info by bus
-     */
-    public void getBusInfoPage(Message msg, String url) throws IOException {
-        Document busInfo = Jsoup.connect(url).get();
-
-        // Получаем содержимое указанного класса и элементы указанного тега
-        Elements liElements = busInfo.getElementsByClass("time-table").get(0).getElementsByTag("li");
-        String hour = "Час: ";
-        String minutes = "Минуты: ";
-        for (Element liElement : liElements) {
-            sendMessage(msg.getChatId(), hour + liElement.getElementsByClass("hour").text() +
-                    "  " + minutes + liElement.getElementsByClass("minute").text());
-        }
-    }
-
-    /**
-     * Method command register user before start
-     */
-    private void registerUser(Message msg) {
-        if (userRepository.findById(msg.getChatId()).isEmpty()) {
-            var chatId = msg.getChatId();
-            var chat = msg.getChat();
-
-            User user = new User();
-            user.setChatId(chatId);
-            user.setFirstName(chat.getFirstName());
-            user.setLastName(chat.getLastName());
-            user.setUserName(chat.getUserName());
-            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
-
-            userRepository.save(user);
-            log.info("user saved" + user);
-        }
-    }
-
-    /**
-     * Method command myData. Get user info by user chatId
-     */
-    private void getUserInfo(Message msg) {
-        if (userRepository.findById(msg.getChatId()).isPresent()) {
-            String answer = userRepository.findById(msg.getChatId()).get().toString();
-            sendMessage(msg.getChatId(), answer);
-        }
-    }
-
-    /**
-     * Method command myData. Delete user info by user chatId
-     */
-    private void deleteUserInfo(Message msg) {
-        if (userRepository.findById(msg.getChatId()).isPresent()) {
-            userRepository.deleteById(msg.getChatId());
-            String answer = "Данные быди удалены";
-            sendMessage(msg.getChatId(), answer);
-            log.info("user chatId: " + msg.getChatId() + "is deleted");
-        } else {
-            String answer = "Данные не найдены";
-            sendMessage(msg.getChatId(), answer);
-            log.info("user info not found");
-        }
-    }
 
     /**
      * Method command start
@@ -205,11 +144,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     /**
      * Method send message
      */
-    private void sendMessage(long chatId, String textMessage) {
+    public void sendMessage(long chatId, String textMessage) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
 
+        System.out.println(message);
         try {
             execute(message);
         } catch (TelegramApiException e) {
