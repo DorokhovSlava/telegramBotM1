@@ -1,7 +1,10 @@
 package com.dorokhov.telegrambotm1.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,6 +15,9 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class User {
     @Id
     //@Column(name = "chatId")

@@ -32,7 +32,7 @@ public class BusInfoServiceImpl implements BusInfoService {
         String minutes = "Минуты: ";
         for (Element liElement : liElements) {
             answer.add(hour + liElement.getElementsByClass("hour").text() +
-                    "  " + minutes + liElement.getElementsByClass("minute").text());
+                    " " + minutes + liElement.getElementsByClass("minute").text() + " ");
         }
         return answer;
     }
