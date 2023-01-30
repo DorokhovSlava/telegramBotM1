@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @ComponentScan(basePackageClasses = BotConfiguration.class)
 @EntityScan("com.dorokhov.telegrambotm1.model")
-@EnableJpaRepositories("com.dorokhov.telegrambotm1.repositories")
+@EnableJpaRepositories("com.dorokhov.telegrambotm1.repository")
 @Data
 @PropertySource("application.properties")
 public class BotConfiguration {

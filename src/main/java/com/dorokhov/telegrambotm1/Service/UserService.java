@@ -8,5 +8,7 @@ public interface UserService {
 
     String getUserInfo(Message msg);
 
+    String getAllUserInfo();
+
     String deleteUserInfo(Message msg);
 }
