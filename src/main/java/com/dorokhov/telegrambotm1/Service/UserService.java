@@ -11,4 +11,5 @@ public interface UserService {
     String getAllUserInfo();
 
     String deleteUserInfo(Message msg);
+
 }

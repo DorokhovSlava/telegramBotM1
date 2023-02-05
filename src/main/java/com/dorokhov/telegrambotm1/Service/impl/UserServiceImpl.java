@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
             user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
 
             userRepository.save(user);
-            log.info("user saved" + user);
+            log.info("user saved " + user);
         }
         log.error("user not saved by chatId: " + msg.getChatId());
     }

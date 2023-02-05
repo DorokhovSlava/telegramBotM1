@@ -7,7 +7,6 @@ import com.dorokhov.telegrambotm1.service.UserService;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -93,7 +92,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
-            messageService.saveMessage(update.getMessage());
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
@@ -128,14 +126,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(update.getMessage().getChatId(), String.join("\n", busInfoService.getBusInfo(update.getMessage(), urlCircus)));
                     break;
 
-                case "all_message":
-                    sendMessage(update.getMessage().getChatId(), String.valueOf(messageService.getAllMessage(update.getMessage())));
+//                case "all_message":
+//                    sendMessage(update.getMessage().getChatId(), String.valueOf(messageService.getAllMessagesByName(update.getMessage())));
 
                 default:
                     String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
                     sendMessage(chatId, "Прошу прощения, команда пока не поддерживается " + emojiAnswer
                             + "\n\n Для получения списка команд выберите /help");
             }
+            //messageService.saveMessage(update.getMessage());
         }
     }
 
