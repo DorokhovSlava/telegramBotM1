@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -20,25 +21,25 @@ import java.sql.Timestamp;
 @Accessors(chain = true)
 public class User {
     @Id
-    //@Column(name = "chatId")
+    @Column(name = "chat_id")
     private Long chatId;
-    //@Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
-    //@Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
-    //@Column(name = "userName")
+    @Column(name = "user_name")
     private String userName;
-    //@Column(name = "userRegistered")
+    @Column(name = "registered_at")
     private Timestamp registeredAt;
 
     @Override
     public String toString() {
         return "User{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", userName='" + userName + '\'' +
-                ", chatId=" + chatId +
-                ", registeredAt=" + registeredAt +
+                "first name='" + firstName + '\'' +
+                ", last name='" + lastName + '\'' +
+                ", user name='" + userName + '\'' +
+                ", chat id=" + chatId +
+                ", registered at=" + registeredAt +
                 '}';
     }
 
