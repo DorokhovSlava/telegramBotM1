@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
     public String getUserInfo(Message msg) {
         if (userRepository.findById(msg.getChatId()).isEmpty()) {
             Stream<User> stringStream = Stream.of(userRepository.getUserById(msg.getChatId()));
-            //String answer = userRepository.findById(msg.getChatId()).get().toString();
             return stringStream.toString();
         }
         String answer = "Данные не найдены";

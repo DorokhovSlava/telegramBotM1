@@ -25,14 +25,9 @@ import java.util.*;
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private BusInfoService busInfoService;
-
-    @Autowired
-    private MessageService messageService;
+    private final BusInfoService busInfoService;
 
     final BotConfiguration configuration;
 
@@ -47,7 +42,9 @@ public class TelegramBot extends TelegramLongPollingBot {
             + "Выберите /bus24_circus - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Цирк» \n\n";
 
     @Autowired
-    public TelegramBot(BotConfiguration configuration) {
+    public TelegramBot(UserService userService, BusInfoService busInfoService, MessageService messageService, BotConfiguration configuration) {
+        this.userService = userService;
+        this.busInfoService = busInfoService;
         this.configuration = configuration;
 
         // Menu of commands
@@ -126,15 +123,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(update.getMessage().getChatId(), String.join("\n", busInfoService.getBusInfo(update.getMessage(), urlCircus)));
                     break;
 
-//                case "all_message":
-//                    sendMessage(update.getMessage().getChatId(), String.valueOf(messageService.getAllMessagesByName(update.getMessage())));
-
                 default:
                     String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
                     sendMessage(chatId, "Прошу прощения, команда пока не поддерживается " + emojiAnswer
                             + "\n\n Для получения списка команд выберите /help");
             }
-            //messageService.saveMessage(update.getMessage());
         }
     }
 
