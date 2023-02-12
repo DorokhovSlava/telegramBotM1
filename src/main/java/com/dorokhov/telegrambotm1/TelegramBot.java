@@ -25,9 +25,13 @@ import java.util.*;
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
 
+    @Autowired
     private final UserService userService;
-
+    @Autowired
     private final BusInfoService busInfoService;
+
+    @Autowired
+    private final MessageService messageService;
 
     final BotConfiguration configuration;
 
@@ -45,6 +49,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(UserService userService, BusInfoService busInfoService, MessageService messageService, BotConfiguration configuration) {
         this.userService = userService;
         this.busInfoService = busInfoService;
+        this.messageService = messageService;
         this.configuration = configuration;
 
         // Menu of commands
