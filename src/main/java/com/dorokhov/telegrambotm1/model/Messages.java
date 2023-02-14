@@ -9,11 +9,11 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
-@Table(name = "users")
+@Table(name = "messages")
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class User {
+public class Messages {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,26 +21,27 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "chat_id")
-    private Long chatId;
-    @Column(name = "first_name")
-    private String firstName;
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "text_message")
+    private String textMessage;
+
     @Column(name = "user_name")
     private String userName;
-    @Column(name = "registered_at")
-    private Timestamp registeredAt;
+
+    @Column(name = "message_date")
+    private Timestamp messageDate;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_chat_id", referencedColumnName = "chat_id")
+    private User user;
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Messages{" +
                 "id=" + id +
-                ", chatId=" + chatId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                ", textMessage='" + textMessage + '\'' +
                 ", userName='" + userName + '\'' +
-                ", registeredAt=" + registeredAt +
+                ", messageDate=" + messageDate +
+                ", user=" + user +
                 '}';
     }
 }
