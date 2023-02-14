@@ -16,8 +16,9 @@ import java.sql.Timestamp;
 public class Messages {
 
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "text_message")
@@ -29,13 +30,18 @@ public class Messages {
     @Column(name = "message_date")
     private Timestamp messageDate;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_chat_id", referencedColumnName = "chat_id")
+    private User user;
+
     @Override
     public String toString() {
-        return "Message{" +
+        return "Messages{" +
                 "id=" + id +
-                ", text message='" + textMessage + '\'' +
-                ", user name='" + userName + '\'' +
-                ", message date='" + messageDate + '\'' +
+                ", textMessage='" + textMessage + '\'' +
+                ", userName='" + userName + '\'' +
+                ", messageDate=" + messageDate +
+                ", user=" + user +
                 '}';
     }
 }

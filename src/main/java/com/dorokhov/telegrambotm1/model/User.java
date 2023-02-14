@@ -1,15 +1,9 @@
 package com.dorokhov.telegrambotm1.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
@@ -20,7 +14,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class User {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "chat_id")
     private Long chatId;
     @Column(name = "first_name")
@@ -35,12 +35,12 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "first name='" + firstName + '\'' +
-                ", last name='" + lastName + '\'' +
-                ", user name='" + userName + '\'' +
-                ", chat id=" + chatId +
-                ", registered at=" + registeredAt +
+                "id=" + id +
+                ", chatId=" + chatId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", userName='" + userName + '\'' +
+                ", registeredAt=" + registeredAt +
                 '}';
     }
-
 }

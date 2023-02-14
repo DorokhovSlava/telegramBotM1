@@ -25,13 +25,11 @@ import java.util.*;
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
 
-    @Autowired
-    private final UserService userService;
-    @Autowired
-    private final BusInfoService busInfoService;
+    private UserService userService;
 
-    @Autowired
-    private final MessageService messageService;
+    private BusInfoService busInfoService;
+
+    private MessageService messageService;
 
     final BotConfiguration configuration;
 
@@ -96,12 +94,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
+            var msg = update.getMessage();
 
             switch (messageText) {
 
                 case "/start":
-                    userService.registerUser(update.getMessage());
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                    userService.registerUser(msg);
+                    startCommandReceived(chatId, msg.getChat().getFirstName());
                     break;
 
                 case "/help":
@@ -109,26 +108,27 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
 
                 case "/mydata":
-                    userService.getUserInfo(update.getMessage());
-                    sendMessage(update.getMessage().getChatId(), userService.getUserInfo(update.getMessage()));
+                    userService.getUserInfo(msg);
+                    sendMessage(chatId, userService.getUserInfo(msg));
                     break;
 
                 case "/deletedata":
-                    userService.deleteUserInfo(update.getMessage());
-                    sendMessage(update.getMessage().getChatId(), userService.deleteUserInfo(update.getMessage()));
+                    userService.deleteUserInfo(msg);
+                    sendMessage(chatId, userService.deleteUserInfo(msg));
                     break;
 
                 case "/bus24_balmoshnaya":
                     String urlBalm = "http://www.m.gortransperm.ru/time-table/24/108302";
-                    sendMessage(update.getMessage().getChatId(), String.join("\n", busInfoService.getBusInfo(update.getMessage(), urlBalm)));
+                    sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlBalm)));
                     break;
 
                 case "/bus24_circus":
                     String urlCircus = "http://www.m.gortransperm.ru/time-table/24/8100";
-                    sendMessage(update.getMessage().getChatId(), String.join("\n", busInfoService.getBusInfo(update.getMessage(), urlCircus)));
+                    sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlCircus)));
                     break;
 
                 default:
+                    messageService.saveMessage(update.getMessage());
                     String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
                     sendMessage(chatId, "Прошу прощения, команда пока не поддерживается " + emojiAnswer
                             + "\n\n Для получения списка команд выберите /help");

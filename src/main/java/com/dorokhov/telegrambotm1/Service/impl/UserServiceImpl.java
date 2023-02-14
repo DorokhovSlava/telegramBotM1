@@ -9,25 +9,21 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
-import java.util.stream.Stream;
 
-@Service
+
 @Slf4j
+@Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
 
     /**
      * @param msg
      */
     @Override
     public void registerUser(Message msg) {
-        if (userRepository.findById(msg.getChatId()).isEmpty()) {
+        if (userRepository.findByChatId(msg.getChatId()) == null) {
             var chatId = msg.getChatId();
             var chat = msg.getChat();
 
@@ -41,7 +37,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             log.info("user saved " + user);
         }
-        log.error("user not saved by chatId: " + msg.getChatId());
+        log.error("user already exists by chatId: " + msg.getChatId());
     }
 
     /**
@@ -50,9 +46,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String getUserInfo(Message msg) {
-        if (userRepository.findById(msg.getChatId()).isEmpty()) {
-            Stream<User> stringStream = Stream.of(userRepository.getUserById(msg.getChatId()));
-            return stringStream.toString();
+        if (userRepository.findByChatId(msg.getChatId()) != null) {
+            return userRepository.findByChatId(msg.getChatId()).toString();
         }
         String answer = "Данные не найдены";
     log.error("not found user info by chatId: " + msg.getChatId());
@@ -62,6 +57,7 @@ public class UserServiceImpl implements UserService {
     /**
      * @return
      */
+   /*
     @Override
     public String getAllUserInfo() {
         String userStream = Stream.of(userRepository.findAllUser()).toString();
@@ -73,13 +69,15 @@ public class UserServiceImpl implements UserService {
         return userStream;
     }
 
+    */
+
     /**
      * @param msg
      * @return Sting
      */
     @Override
     public String deleteUserInfo(Message msg) {
-        if (userRepository.findById(msg.getChatId()).isPresent()) {
+        if (userRepository.findByChatId(msg.getChatId()) != null) {
             userRepository.deleteById(msg.getChatId());
             String answer = "Данные были удалены";
             log.info("user chatId: " + msg.getChatId() + "is deleted");
