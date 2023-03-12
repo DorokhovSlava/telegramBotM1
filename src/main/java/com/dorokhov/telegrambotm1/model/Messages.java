@@ -1,10 +1,12 @@
 package com.dorokhov.telegrambotm1.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,8 +32,9 @@ public class Messages {
     @Column(name = "message_date")
     private Timestamp messageDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_chat_id", referencedColumnName = "chat_id")
+    @JsonBackReference
+    @ManyToOne(optional = false,cascade = CascadeType.ALL)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     private User user;
 
     @Override
@@ -41,7 +44,6 @@ public class Messages {
                 ", textMessage='" + textMessage + '\'' +
                 ", userName='" + userName + '\'' +
                 ", messageDate=" + messageDate +
-                ", user=" + user +
                 '}';
     }
 }

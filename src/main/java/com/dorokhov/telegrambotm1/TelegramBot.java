@@ -25,11 +25,11 @@ import java.util.*;
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private UserService userService;
+    private final UserService userService;
 
-    private BusInfoService busInfoService;
+    private final BusInfoService busInfoService;
 
-    private MessageService messageService;
+    private final MessageService messageService;
 
     final BotConfiguration configuration;
 
