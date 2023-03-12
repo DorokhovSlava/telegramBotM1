@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    active: "@activeProfile"
+  liquibase:
+    change-log: classpath:db/db.changelog-master.xml
+    enabled: true
+    liquibase-schema: public
