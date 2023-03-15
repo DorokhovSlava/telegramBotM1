@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -23,17 +22,17 @@ public class Messages {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "text_message")
+    @Column(name = "msg_text")
     private String textMessage;
 
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "message_date")
+    @Column(name = "msg_date")
     private Timestamp messageDate;
 
     @JsonBackReference
-    @ManyToOne(optional = false,cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "id", insertable = false, updatable = false)
     private User user;
 

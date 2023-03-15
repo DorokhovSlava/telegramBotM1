@@ -1,11 +1,13 @@
 package com.dorokhov.telegrambotm1.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +38,15 @@ public class User {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-    private List<Messages> messages;
+    private List<Messages> messagesList;
+
+    @JsonManagedReference
+    @JsonBackReference
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<RoleEntity> roles = new ArrayList<>();
 
     @Override
     public String toString() {
