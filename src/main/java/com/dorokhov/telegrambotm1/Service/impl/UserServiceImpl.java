@@ -77,14 +77,16 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String deleteUserInfo(Message msg) {
-        if (userRepository.findByChatId(msg.getChatId()) != null) {
-            userRepository.deleteById(msg.getChatId());
+        User findUser = userRepository.findByChatId(msg.getChatId());
+        if (findUser!= null) {
+            Long userId = findUser.getId();
+            userRepository.deleteById(userId);
             String answer = "Данные были удалены";
-            log.info("user chatId: " + msg.getChatId() + "is deleted");
+            log.info("info user by chatId: " + msg.getChatId() + "is deleted");
             return answer;
         } else {
             String answer = "Данные не найдены";
-            log.info("user info not found");
+            log.info("user info by chatId: " + msg.getChatId() + " not found");
             return answer;
         }
     }
