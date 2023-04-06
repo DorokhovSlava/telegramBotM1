@@ -1,6 +1,5 @@
 package com.dorokhov.telegrambotm1.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -31,7 +30,6 @@ public class Messages {
     @Column(name = "msg_date")
     private Timestamp messageDate;
 
-    @JsonBackReference
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "id", insertable = false, updatable = false)
     private User user;
