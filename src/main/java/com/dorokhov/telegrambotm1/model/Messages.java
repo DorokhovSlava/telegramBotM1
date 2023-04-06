@@ -21,17 +21,17 @@ public class Messages {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "text_message")
+    @Column(name = "msg_text")
     private String textMessage;
 
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "message_date")
+    @Column(name = "msg_date")
     private Timestamp messageDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_chat_id", referencedColumnName = "chat_id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     private User user;
 
     @Override
@@ -41,7 +41,6 @@ public class Messages {
                 ", textMessage='" + textMessage + '\'' +
                 ", userName='" + userName + '\'' +
                 ", messageDate=" + messageDate +
-                ", user=" + user +
                 '}';
     }
 }

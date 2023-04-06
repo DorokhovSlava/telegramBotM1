@@ -25,13 +25,13 @@ public class MessageServiceImpl implements MessageService {
             var msgText = msg.getText();
             var userName = msg.getChat().getUserName();
 
-            Messages message = new Messages();
-            message.setTextMessage(msgText);
-            message.setUserName(userName);
-            message.setUser(message.getUser());
-            message.setMessageDate(new Timestamp(System.currentTimeMillis()));
+            Messages messages = new Messages();
+            messages.setTextMessage(msgText);
+            messages.setUserName(userName);
+            messages.setUser(messages.getUser());
+            messages.setMessageDate(new Timestamp(System.currentTimeMillis()));
 
-            messageRepository.save(message);
+            messageRepository.save(messages);
             log.info("message saved by chatId: " + msg.getChatId());
     }
 }

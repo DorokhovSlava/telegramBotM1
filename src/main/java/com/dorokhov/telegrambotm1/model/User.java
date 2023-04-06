@@ -1,10 +1,12 @@
 package com.dorokhov.telegrambotm1.model;
 
+
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,6 +33,9 @@ public class User {
     private String userName;
     @Column(name = "registered_at")
     private Timestamp registeredAt;
+
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    private List<Messages> messagesList;
 
     @Override
     public String toString() {
