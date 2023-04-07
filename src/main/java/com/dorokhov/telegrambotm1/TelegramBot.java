@@ -40,7 +40,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             + "Выберите /help - чтобы получить эту справочную информацию ещё раз \n\n"
             + "Выберите /mydata - получить информацию о своём аккаунте и дату регистрации \n\n"
             + "Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации \n\n"
-            + "Выберите /mymessages - получить информацию о своих сообщениях\n\n"
+            + "Выберите /mymsg - получить информацию о своих сообщениях\n\n"
+            + "Выберите /deletemymsg - удалить информацию о своих сообщениях\n\n"
             + "Выберите /bus24_balmoshnaya - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Балмошная»\n\n"
             + "Выберите /bus24_circus - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Цирк» \n\n";
 
@@ -56,7 +57,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
         listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
         listOfCommands.add(new BotCommand("/deletedata", "удаление истории и информации"));
-        listOfCommands.add(new BotCommand("/mymessages", "все сохранённые сообщения"));
+        listOfCommands.add(new BotCommand("/mymsg", "все сохранённые сообщения"));
+        listOfCommands.add(new BotCommand("/deletemymsg", "все сохранённые сообщения"));
         listOfCommands.add(new BotCommand("/help", "информация о боте"));
         listOfCommands.add(new BotCommand("/bus24_balmoshnaya", "24 «Балмошная» «ул.Памирская – Пл.Дружбы»\n" +
                 "Остановка: «Балмошная» "));
@@ -121,9 +123,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(chatId, userService.deleteUserInfo(msg));
                     break;
 
-                case "/mymessages":
+                case "/mymsg":
                     messageService.getAllByUserName(msg);
                     sendMessage(chatId, messageService.getAllByUserName(msg).toString());
+                    break;
+
+                case "/deletemymsg":
+                    messageService.deleteAllByName(msg);
+                    sendMessage(chatId, " Messages deleted");
+                    break;
 
                 case "/bus24_balmoshnaya":
                     String urlBalm = "http://www.m.gortransperm.ru/time-table/24/108302";
