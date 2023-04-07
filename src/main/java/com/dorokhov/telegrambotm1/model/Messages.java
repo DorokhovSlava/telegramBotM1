@@ -17,7 +17,6 @@ public class Messages {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
     @Column(name = "id")
     private Long id;
 
@@ -29,10 +28,6 @@ public class Messages {
 
     @Column(name = "msg_date")
     private Timestamp messageDate;
-
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id", insertable = false, updatable = false)
-    private User user;
 
     @Override
     public String toString() {

@@ -1,6 +1,7 @@
 package com.dorokhov.telegrambotm1.service.impl;
 
 import com.dorokhov.telegrambotm1.repository.MessageRepository;
+import com.dorokhov.telegrambotm1.repository.UserRepository;
 import com.dorokhov.telegrambotm1.service.MessageService;
 import com.dorokhov.telegrambotm1.model.Messages;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +23,15 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public void saveMessage(Message msg) {
-            var msgText = msg.getText();
-            var userName = msg.getChat().getUserName();
+        var msgText = msg.getText();
+        var userName = msg.getChat().getUserName();
 
-            Messages messages = new Messages();
-            messages.setTextMessage(msgText);
-            messages.setUserName(userName);
-            messages.setUser(messages.getUser());
-            messages.setMessageDate(new Timestamp(System.currentTimeMillis()));
+        Messages messages = new Messages();
+        messages.setTextMessage(msgText);
+        messages.setUserName(userName);
+        messages.setMessageDate(new Timestamp(System.currentTimeMillis()));
 
-            messageRepository.save(messages);
-            log.info("message saved by chatId: " + msg.getChatId());
+        messageRepository.save(messages);
+        log.info("message saved by chatId: " + msg.getChatId());
     }
 }

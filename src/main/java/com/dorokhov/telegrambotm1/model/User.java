@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Entity
 @Getter
@@ -25,17 +24,18 @@ public class User {
 
     @Column(name = "chat_id")
     private Long chatId;
+
     @Column(name = "first_name")
     private String firstName;
+
     @Column(name = "last_name")
     private String lastName;
+
     @Column(name = "user_name")
     private String userName;
+
     @Column(name = "registered_at")
     private Timestamp registeredAt;
-
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-    private List<Messages> messagesList;
 
     @Override
     public String toString() {
