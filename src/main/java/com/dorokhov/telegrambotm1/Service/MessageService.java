@@ -1,5 +1,6 @@
 package com.dorokhov.telegrambotm1.service;
 
+import com.dorokhov.telegrambotm1.model.Messages;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.List;
@@ -8,12 +9,10 @@ public interface MessageService {
 
     void saveMessage(Message msg);
 
-    /*
-    void deleteAllMessagesByName(Message msg);
+    void deleteAllByName(Message msg);
 
-    List<Messages> getAllMessagesByName(Message msg);
+    List<Messages> getAllByUserName(Message msg);
 
-    List<com.dorokhov.telegrambotm1.model.Message> getMessageByOptional(Message msg);
-    */
+    List<Messages> getByText(Message msg);
 
 }

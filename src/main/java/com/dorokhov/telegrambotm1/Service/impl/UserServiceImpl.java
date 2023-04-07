@@ -55,23 +55,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @return
-     */
-   /*
-    @Override
-    public String getAllUserInfo() {
-        String userStream = Stream.of(userRepository.findAllUser()).toString();
-        if (userStream.isEmpty()){
-            log.error("not found user info");
-            return null;
-        }
-        log.info("request get all info");
-        return userStream;
-    }
-
-    */
-
-    /**
      * @param msg
      * @return Sting
      */
@@ -86,7 +69,7 @@ public class UserServiceImpl implements UserService {
             return answer;
         } else {
             String answer = "Данные не найдены";
-            log.info("user info by chatId: " + msg.getChatId() + " not found");
+            log.error("user info by chatId: " + msg.getChatId() + " not found");
             return answer;
         }
     }

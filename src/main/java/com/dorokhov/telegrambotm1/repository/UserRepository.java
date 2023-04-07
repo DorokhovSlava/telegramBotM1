@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "delete User u WHERE u.chatId =: chatId")
     void deleteUserByChatId(@Param("chatId") Long chatId);
 
+    User findByUserName(String userName);
+
 }
