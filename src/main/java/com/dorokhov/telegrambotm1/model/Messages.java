@@ -31,11 +31,11 @@ public class Messages {
 
     @Override
     public String toString() {
-        return "Messages{" +
+        return " \n Messages{" +
                 "id=" + id +
                 ", textMessage='" + textMessage + '\'' +
                 ", userName='" + userName + '\'' +
-                ", messageDate=" + messageDate +
+                ", messageDate=" + messageDate + '\'' +
                 '}';
     }
 }
