@@ -101,44 +101,36 @@ public class TelegramBot extends TelegramLongPollingBot {
             messageService.saveMessage(update.getMessage());
 
             switch (messageText) {
-
-                case "/start":
+                case "/start" -> {
                     userService.registerUser(msg);
                     startCommandReceived(chatId, msg.getChat().getFirstName());
-                    break;
-
-                case "/help":
-                    sendMessage(chatId, HELP_TEXT);
-                    break;
-
-                case "/mydata":
+                }
+                case "/help" -> sendMessage(chatId, HELP_TEXT);
+                case "/mydata" -> {
                     userService.getUserInfo(msg);
                     sendMessage(chatId, userService.getUserInfo(msg));
-                    break;
-
-                case "/deletedata":
+                }
+                case "/deletedata" -> {
                     userService.deleteUserInfo(msg);
                     sendMessage(chatId, userService.deleteUserInfo(msg));
-                    break;
-
-                case "/mymessages":
+                }
+                case "/mymessages" -> {
                     messageService.getAllByUserName(msg);
                     sendMessage(chatId, messageService.getAllByUserName(msg).toString());
-
-                case "/bus24_balmoshnaya":
+                }
+                case "/bus24_balmoshnaya" -> {
                     String urlBalm = "http://www.m.gortransperm.ru/time-table/24/108302";
                     sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlBalm)));
-                    break;
-
-                case "/bus24_circus":
+                }
+                case "/bus24_circus" -> {
                     String urlCircus = "http://www.m.gortransperm.ru/time-table/24/8100";
                     sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlCircus)));
-                    break;
-
-                default:
+                }
+                default -> {
                     String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
                     sendMessage(chatId, "Прошу прощения, команда пока не поддерживается " + emojiAnswer
                             + "\n\n Для получения списка команд выберите /help");
+                }
             }
         }
     }
@@ -160,7 +152,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
 
-        System.out.println(message);
+        log.info(message.toString());
         try {
             execute(message);
         } catch (TelegramApiException e) {

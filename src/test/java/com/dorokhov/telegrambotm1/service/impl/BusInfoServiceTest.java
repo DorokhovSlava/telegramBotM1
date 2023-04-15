@@ -1,4 +1,4 @@
-package com.dorokhov.telegrambotm1.Service.impl;
+package com.dorokhov.telegrambotm1.service.impl;
 
 import org.junit.jupiter.api.Test;
 

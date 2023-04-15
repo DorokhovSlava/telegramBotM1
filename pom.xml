@@ -6,7 +6,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.dorokhov</groupId>
     <artifactId>telegramBotM1</artifactId>
@@ -15,7 +14,7 @@
     <description>telegramBotM1</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -102,7 +101,6 @@
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 

@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
 
-
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
