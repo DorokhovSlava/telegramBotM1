@@ -24,19 +24,12 @@ import java.util.*;
 @Component
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
-
     private final UserService userService;
-
     private final BusInfoService busInfoService;
-
     private final MessageService messageService;
-
     final BotConfiguration configuration;
-
     static final String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
-
     static final String DEFAULT_TEXT = "Прошу прощения, команда пока не поддерживается " + emojiAnswer + "\n\n Для получения списка команд выберите /help";
-
     static final String HELP_TEXT = """
             Этот бот позволяет принимать и отправлять сообщения под средством команд в меню и через ввод, а так же сохранять и удалять информацию о запросах и пользователях.\s
 
@@ -48,9 +41,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             Выберите /mydata - получить информацию о своём аккаунте и дату регистрации\s
 
-            Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации\s
+            Выберите /deletemydata - удалить информацию о своём аккаунте и дату регистрации\s
 
-            Выберите /mymessages - получить информацию о своих сообщениях
+            Выберите /mymsg - получить информацию о своих сообщениях
+            
+            Выберите /deletemymsg - получить информацию о своих сообщениях
 
             Выберите /bus24_balmoshnaya - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Балмошная»
 
@@ -64,20 +59,18 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.busInfoService = busInfoService;
         this.messageService = messageService;
         this.configuration = configuration;
-
         // Menu of commands
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
         listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
-        listOfCommands.add(new BotCommand("/deletedata", "удаление истории и информации"));
-        listOfCommands.add(new BotCommand("/mymessages", "все сохранённые сообщения пользователя"));
+        listOfCommands.add(new BotCommand("/deletemydata", "удаление истории и информации"));
+        listOfCommands.add(new BotCommand("/mymsg", "все сохранённые сообщения пользователя"));
         listOfCommands.add(new BotCommand("/deletemymsg", "удалить все сообщения пользователя"));
         listOfCommands.add(new BotCommand("/help", "информация о боте"));
         listOfCommands.add(new BotCommand("/bus24_balmoshnaya", "24 «Балмошная» «ул.Памирская – Пл.Дружбы»\n" +
                 "Остановка: «Балмошная» "));
         listOfCommands.add(new BotCommand("/bus24_circus", "24 «Цирк» «ул.Памирская – Пл.Дружбы»\n " +
                 "Остановка: «Цирк» "));
-
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
@@ -107,14 +100,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
             var msg = update.getMessage();
-
             messageService.saveMessage(update.getMessage());
-
             switch (messageText) {
                 case "/start" -> {
                     userService.registerUser(msg);
@@ -125,12 +115,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                     userService.getUserInfo(msg);
                     sendMessage(chatId, userService.getUserInfo(msg));
                 }
-                case "/deletedata" -> {
+                case "/deletemydata" -> {
                     userService.deleteUserInfo(msg);
                     messageService.deleteAllByName(msg);
                     sendMessage(chatId, userService.deleteUserInfo(msg));
                 }
-                case "/mymessages" -> {
+                case "/mymsg" -> {
                     messageService.getAllByUserName(msg);
                     sendMessage(chatId, messageService.getAllByUserName(msg).toString());
                 }
@@ -169,7 +159,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         message.setText(textMessage);
         log.info(message.toString());
         try {
-            execute(message);
+            this.execute(message);
         } catch (TelegramApiException e) {
             log.error("Error occurred: " + e.getMessage());
         }
