@@ -33,16 +33,30 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     final BotConfiguration configuration;
 
-    static final String HELP_TEXT = "Этот бот позволяет принимать и отправлять сообщения под средством команд в меню и через ввод, " +
-            "а так же сохранять и удалять информацию о запросах и пользователях. \n\n"
-            + "VERSION MARK1 \n\n"
-            + "Выберите /start - чтобы начать работу и получить приветвтвенное сообщение\n\n"
-            + "Выберите /help - чтобы получить эту справочную информацию ещё раз \n\n"
-            + "Выберите /mydata - получить информацию о своём аккаунте и дату регистрации \n\n"
-            + "Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации \n\n"
-            + "Выберите /mymessages - получить информацию о своих сообщениях\n\n"
-            + "Выберите /bus24_balmoshnaya - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Балмошная»\n\n"
-            + "Выберите /bus24_circus - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Цирк» \n\n";
+    static final String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
+
+    static final String DEFAULT_TEXT = "Прошу прощения, команда пока не поддерживается " + emojiAnswer + "\n\n Для получения списка команд выберите /help";
+
+    static final String HELP_TEXT = """
+            Этот бот позволяет принимать и отправлять сообщения под средством команд в меню и через ввод, а так же сохранять и удалять информацию о запросах и пользователях.\s
+
+            VERSION MARK1\s
+
+            Выберите /start - чтобы начать работу и получить приветвтвенное сообщение
+
+            Выберите /help - чтобы получить эту справочную информацию ещё раз\s
+
+            Выберите /mydata - получить информацию о своём аккаунте и дату регистрации\s
+
+            Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации\s
+
+            Выберите /mymessages - получить информацию о своих сообщениях
+
+            Выберите /bus24_balmoshnaya - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Балмошная»
+
+            Выберите /bus24_circus - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Цирк»\s
+
+            """;
 
     @Autowired
     public TelegramBot(UserService userService, BusInfoService busInfoService, MessageService messageService, BotConfiguration configuration) {
@@ -56,7 +70,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
         listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
         listOfCommands.add(new BotCommand("/deletedata", "удаление истории и информации"));
-        listOfCommands.add(new BotCommand("/mymessages", "все сохранённые сообщения"));
+        listOfCommands.add(new BotCommand("/mymessages", "все сохранённые сообщения пользователя"));
+        listOfCommands.add(new BotCommand("/deletemymsg", "удалить все сообщения пользователя"));
         listOfCommands.add(new BotCommand("/help", "информация о боте"));
         listOfCommands.add(new BotCommand("/bus24_balmoshnaya", "24 «Балмошная» «ул.Памирская – Пл.Дружбы»\n" +
                 "Остановка: «Балмошная» "));
@@ -112,10 +127,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
                 case "/deletedata" -> {
                     userService.deleteUserInfo(msg);
+                    messageService.deleteAllByName(msg);
                     sendMessage(chatId, userService.deleteUserInfo(msg));
                 }
                 case "/mymessages" -> {
                     messageService.getAllByUserName(msg);
+                    sendMessage(chatId, messageService.getAllByUserName(msg).toString());
+                }
+                case "/deletemymsg" -> {
+                    messageService.deleteAllByName(msg);
                     sendMessage(chatId, messageService.getAllByUserName(msg).toString());
                 }
                 case "/bus24_balmoshnaya" -> {
@@ -126,11 +146,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     String urlCircus = "http://www.m.gortransperm.ru/time-table/24/8100";
                     sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlCircus)));
                 }
-                default -> {
-                    String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
-                    sendMessage(chatId, "Прошу прощения, команда пока не поддерживается " + emojiAnswer
-                            + "\n\n Для получения списка команд выберите /help");
-                }
+                default -> sendMessage(chatId, DEFAULT_TEXT);
             }
         }
     }
@@ -151,7 +167,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
-
         log.info(message.toString());
         try {
             execute(message);

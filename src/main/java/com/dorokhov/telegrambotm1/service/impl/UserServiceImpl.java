@@ -35,8 +35,9 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(user);
             log.info("user saved " + user);
+        } else {
+            log.error("user already exists by chatId: " + msg.getChatId());
         }
-        log.error("user already exists by chatId: " + msg.getChatId());
     }
 
     /**
@@ -45,12 +46,16 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String getUserInfo(Message msg) {
-        if (userRepository.findByChatId(msg.getChatId()) != null) {
+        User findUser = userRepository.findByChatId(msg.getChatId());
+        String answer;
+        if (findUser != null) {
+            log.info("info user by chatId: " + msg.getChatId());
             return userRepository.findByChatId(msg.getChatId()).toString();
+        } else {
+            answer = "Данные не найдены";
+            log.error("not found user info by chatId: " + msg.getChatId());
+            return answer;
         }
-        String answer = "Данные не найдены";
-    log.error("not found user info by chatId: " + msg.getChatId());
-        return answer;
     }
 
     /**
@@ -60,16 +65,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deleteUserInfo(Message msg) {
         User findUser = userRepository.findByChatId(msg.getChatId());
-        if (findUser!= null) {
+        String answer;
+        if (findUser != null) {
             Long userId = findUser.getId();
             userRepository.deleteById(userId);
-            String answer = "Данные были удалены";
+            answer = "Данные были удалены";
             log.info("info user by chatId: " + msg.getChatId() + "is deleted");
-            return answer;
         } else {
-            String answer = "Данные не найдены";
+            answer = "Данные не найдены";
             log.error("user info by chatId: " + msg.getChatId() + " not found");
-            return answer;
         }
+        return answer;
     }
 }

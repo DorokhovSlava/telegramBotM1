@@ -63,9 +63,10 @@ public class MessageServiceImpl implements MessageService {
         if (userRepository.findByUserName(userName) != null) {
             log.info(" found all messages by  " + userName);
             return messageRepository.findAllByName(userName).stream().collect(Collectors.toList());
+        } else {
+            log.error(" not found messages by " + userName);
+            return null;
         }
-        log.error(" not found messages by " + userName);
-        return null;
     }
 
     /**

@@ -10,12 +10,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    User findByChatId(Long chatId);
+    @Query(value = "SELECT user FROM User user WHERE user.chatId=:chatId")
+    User findByChatId(@Param("chatId") Long chatId);
+
+    @Query(value = "SELECT user FROM User user WHERE user.userName=:userName")
+    User findByUserName(@Param("userName") String userName);
 
     @Modifying
     @Query(value = "delete User u WHERE u.chatId =: chatId")
     void deleteUserByChatId(@Param("chatId") Long chatId);
-
-    User findByUserName(String userName);
 
 }
