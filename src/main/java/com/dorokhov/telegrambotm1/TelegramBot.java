@@ -70,7 +70,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
         listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
         listOfCommands.add(new BotCommand("/deletedata", "удаление истории и информации"));
-        listOfCommands.add(new BotCommand("/mymessages", "все сохранённые сообщения"));
+        listOfCommands.add(new BotCommand("/mymessages", "все сохранённые сообщения пользователя"));
+        listOfCommands.add(new BotCommand("/deletemymsg", "удалить все сообщения пользователя"));
         listOfCommands.add(new BotCommand("/help", "информация о боте"));
         listOfCommands.add(new BotCommand("/bus24_balmoshnaya", "24 «Балмошная» «ул.Памирская – Пл.Дружбы»\n" +
                 "Остановка: «Балмошная» "));
@@ -126,10 +127,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
                 case "/deletedata" -> {
                     userService.deleteUserInfo(msg);
+                    messageService.deleteAllByName(msg);
                     sendMessage(chatId, userService.deleteUserInfo(msg));
                 }
                 case "/mymessages" -> {
                     messageService.getAllByUserName(msg);
+                    sendMessage(chatId, messageService.getAllByUserName(msg).toString());
+                }
+                case "/deletemymsg" -> {
+                    messageService.deleteAllByName(msg);
                     sendMessage(chatId, messageService.getAllByUserName(msg).toString());
                 }
                 case "/bus24_balmoshnaya" -> {
