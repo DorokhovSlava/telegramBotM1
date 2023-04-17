@@ -23,7 +23,7 @@ public class CommandDispatcherImpl implements CommandDispatcher {
     }
 
     @Override
-    public void registrateCommand(String commandId, Command command) {
+    public void registrationCommand(String commandId, Command command) {
         commandById.put(commandId, command);
     }
 }

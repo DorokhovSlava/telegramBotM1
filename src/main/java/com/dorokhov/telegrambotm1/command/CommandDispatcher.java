@@ -7,5 +7,5 @@ public interface CommandDispatcher {
 
     Map<String, String> allCommandDescriptionById();
 
-    void registrateCommand(String commandId, Command command);
+    void registrationCommand(String commandId, Command command);
 }
