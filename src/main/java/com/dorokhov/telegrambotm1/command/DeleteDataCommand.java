@@ -6,25 +6,33 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class StartCommand implements Command {
+public class DeleteDataCommand implements Command {
 
     @Autowired
     private UserService userService;
 
+    /**
+     * @param msg 
+     * @return
+     */
     @Override
     public String execute(Message msg) {
-        String userName = msg.getChat().getUserName();
-        userService.registerUser(msg);
-        return "Привет " + userName + ", рад тебя видеть!";
+        return userService.deleteUserInfo(msg);
     }
 
-    @Override
-    public String description() {
-        return "Начало работы, приветствие";
-    }
-
+    /**
+     * @return 
+     */
     @Override
     public String commandId() {
-        return "/start";
+        return "/deletemydata";
+    }
+
+    /**
+     * @return 
+     */
+    @Override
+    public String description() {
+        return "Удаление информации о пользователе";
     }
 }

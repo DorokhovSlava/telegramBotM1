@@ -3,12 +3,7 @@ package com.dorokhov.telegrambotm1;
 import com.dorokhov.telegrambotm1.command.Command;
 import com.dorokhov.telegrambotm1.command.CommandDispatcher;
 import com.dorokhov.telegrambotm1.config.BotConfiguration;
-import com.dorokhov.telegrambotm1.service.BusInfoService;
 import com.dorokhov.telegrambotm1.service.MessageService;
-import com.dorokhov.telegrambotm1.service.UserService;
-import com.vdurmont.emoji.EmojiParser;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,8 +17,10 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @ComponentScan
 @Component
@@ -31,37 +28,12 @@ import java.util.*;
 public class TelegramBot extends TelegramLongPollingBot {
 
     private final CommandDispatcher commandDispatcher;
-    private final BusInfoService busInfoService;
     private final MessageService messageService;
     final BotConfiguration configuration;
 
-    static final String HELP_TEXT = """
-            Этот бот позволяет принимать и отправлять сообщения под средством команд в меню и через ввод, а так же сохранять и удалять информацию о запросах и пользователях.\s
-
-            VERSION MARK1\s
-
-            Выберите /start - чтобы начать работу и получить приветвтвенное сообщение
-
-            Выберите /help - чтобы получить эту справочную информацию ещё раз\s
-
-            Выберите /mydata - получить информацию о своём аккаунте и дату регистрации\s
-
-            Выберите /deletemydata - удалить информацию о своём аккаунте и дату регистрации\s
-
-            Выберите /mymsg - получить информацию о своих сообщениях
-            
-            Выберите /deletemymsg - получить информацию о своих сообщениях
-
-            Выберите /bus24_balmoshnaya - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Балмошная»
-
-            Выберите /bus24_circus - чтобы узнать расписание автобуса 24 «ул.Памирская – Пл.Дружбы(по ул.Крупской)» Остановка: «Цирк»\s
-
-            """;
-
     @Autowired
-    public TelegramBot(CommandDispatcher commandDispatcher, BusInfoService busInfoService, MessageService messageService, BotConfiguration configuration) {
+    public TelegramBot(CommandDispatcher commandDispatcher, MessageService messageService, BotConfiguration configuration) {
         this.commandDispatcher = commandDispatcher;
-        this.busInfoService = busInfoService;
         this.messageService = messageService;
         this.configuration = configuration;
         // Menu of commands
@@ -71,27 +43,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         for (String key : keys) {
             listOfCommands.add(new BotCommand(key, descriptionByKey.get(key)));
         }
-
-//        listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
-//        listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
-//        listOfCommands.add(new BotCommand("/deletemydata", "удаление истории и информации"));
-//        listOfCommands.add(new BotCommand("/mymsg", "все сохранённые сообщения пользователя"));
-//        listOfCommands.add(new BotCommand("/deletemymsg", "удалить все сообщения пользователя"));
-//        listOfCommands.add(new BotCommand("/help", "информация о боте"));
-//        listOfCommands.add(new BotCommand("/bus24_balmoshnaya", "24 «Балмошная» «ул.Памирская – Пл.Дружбы»\n" +
-//                "Остановка: «Балмошная» "));
-//        listOfCommands.add(new BotCommand("/bus24_circus", "24 «Цирк» «ул.Памирская – Пл.Дружбы»\n " +
-//                "Остановка: «Цирк» "));
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
             log.error("Error command list: " + e.getMessage());
         }
-    }
-
-    @PostConstruct
-    void postContruct() {
-
     }
 
     /**
@@ -112,66 +68,18 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            Message message = update.getMessage();
+            Message msg = update.getMessage();
 
-            String messageText = message.getText();
-            long chatId = message.getChatId();
+            String messageText = msg.getText();
+            long chatId = msg.getChatId();
 
             Command command = commandDispatcher.dispatchById(messageText);
-            String answer = command.execute(message);
+            String answer = command.execute(msg);
 
             sendMessage(chatId, answer);
-            messageService.saveMessage(message);
+            messageService.saveMessage(msg);
         }
     }
-
-
-//    /**
-//     * @param update check message from user and return response
-//     */
-//    @SneakyThrows
-//    @Override
-//    public void onUpdateReceived(Update update) {
-//        if (update.hasMessage() && update.getMessage().hasText()) {
-//            String messageText = update.getMessage().getText();
-//            long chatId = update.getMessage().getChatId();
-//            var msg = update.getMessage();
-//            messageService.saveMessage(update.getMessage());
-//            switch (messageText) {
-//                case "/start" -> {
-//                    userService.registerUser(msg);
-//                    startCommandReceived(chatId, msg.getChat().getFirstName());
-//                }
-//                case "/help" -> sendMessage(chatId, HELP_TEXT);
-//                case "/mydata" -> {
-//                    userService.getUserInfo(msg);
-//                    sendMessage(chatId, userService.getUserInfo(msg));
-//                }
-//                case "/deletemydata" -> {
-//                    userService.deleteUserInfo(msg);
-//                    messageService.deleteAllByName(msg);
-//                    sendMessage(chatId, userService.deleteUserInfo(msg));
-//                }
-//                case "/mymsg" -> {
-//                    messageService.getAllByUserName(msg);
-//                    sendMessage(chatId, messageService.getAllByUserName(msg).toString());
-//                }
-//                case "/deletemymsg" -> {
-//                    messageService.deleteAllByName(msg);
-//                    sendMessage(chatId, messageService.getAllByUserName(msg).toString());
-//                }
-//                case "/bus24_balmoshnaya" -> {
-//                    String urlBalm = "http://www.m.gortransperm.ru/time-table/24/108302";
-//                    sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlBalm)));
-//                }
-//                case "/bus24_circus" -> {
-//                    String urlCircus = "http://www.m.gortransperm.ru/time-table/24/8100";
-//                    sendMessage(chatId, String.join("\n", busInfoService.getBusInfo(msg, urlCircus)));
-//                }
-//                default -> sendMessage(chatId, DEFAULT_TEXT);
-//            }
-//        }
-//    }
 
     /**
      * Method send message

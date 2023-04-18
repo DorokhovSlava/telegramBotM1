@@ -8,7 +8,7 @@ public class DefaultCommand implements Command {
     static final String emojiAnswer = EmojiParser.parseToUnicode("\uD83D\uDE4A");
     static final String DEFAULT_TEXT = "Прошу прощения, команда пока не поддерживается " + emojiAnswer + "\n\n Для получения списка команд выберите /help";
     @Override
-    public String execute(Message message) {
+    public String execute(Message msg) {
         return DEFAULT_TEXT;
     }
 

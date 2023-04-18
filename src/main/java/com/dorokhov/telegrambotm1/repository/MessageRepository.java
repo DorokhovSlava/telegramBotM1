@@ -18,9 +18,9 @@ public interface MessageRepository extends JpaRepository<Messages, Long> {
     @Query("SELECT msg FROM Messages msg WHERE msg.textMessage=:msgText")
     List<Messages> findAllByText(String msgText);
 
-    @Query("DELETE FROM Messages msg WHERE msg.userName=:userName")
     @Modifying
     @Transactional
+    @Query("DELETE FROM Messages msg WHERE msg.userName=:userName")
     void deleteAllByName(String userName);
 
 
