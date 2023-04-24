@@ -1,70 +1,69 @@
 package com.dorokhov.telegrambotm1.service;
 
-import com.dorokhov.telegrambotm1.model.Messages;
 import com.dorokhov.telegrambotm1.model.User;
 import com.dorokhov.telegrambotm1.repository.UserRepository;
-import com.dorokhov.telegrambotm1.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
 
-@ExtendWith(MockitoExtension.class)
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+@RunWith(SpringRunner.class)
 class UserServiceTest {
 
-    @Mock
+    @MockBean
     private UserRepository userRepository;
 
-    @InjectMocks
-    private UserServiceImpl userService;
-
-    private User userEntity;
-
-    private Messages messages;
-
+    @Mock
+    private User testUser = mock(User.class);
+    @Mock
     private Message message;
+    @Autowired
+    private UserService userService;
 
     @BeforeEach
-    public void setup(){
-        userEntity = User.builder()
-                .id(1L)
+    public void setup() {
+        testUser = User.builder()
                 .userName("testUser")
                 .firstName("firstName")
                 .lastName("lastName")
-                .registeredAt(new Timestamp(System.currentTimeMillis()))
-                .chatId(11111111L).build();
-
-        messages = Messages.builder()
-                .userName("testUser")
-                .id(11111111L)
-                .textMessage("testMsg")
-                .messageDate(new Timestamp(System.currentTimeMillis()))
-                .build();
+                .registeredAt(new Timestamp(System.currentTimeMillis() / 1000))
+                .chatId(1L).build();
 
         message = new Message();
-        message.setMessageId(1);
-        message.setChat(new Chat(1L, "test"));
-
+        message.setChat(new Chat(1L, "test", "testTitle",
+                "firstName", "lastName", "testUser",
+                null, null, null, null,
+                null, null, null, null,
+                null, null, null, ((int) System.currentTimeMillis()),
+                null, null));
     }
 
     @Test
     void registerUser() {
-
-        //Mockito.when(userService.registerUser()).thenReturn()
-
+        userService.registerUser(message);
+        when(userRepository.findByChatId(message.getChatId())).thenReturn(testUser);
     }
 
     @Test
     void getUserInfo() {
+        when(userRepository.findByChatId(message.getChatId())).thenReturn(testUser);
     }
 
     @Test
     void deleteUserInfo() {
+        userService.deleteUserInfo(message);
+        when(userRepository.findByChatId(message.getChatId())).thenReturn(null);
     }
 }

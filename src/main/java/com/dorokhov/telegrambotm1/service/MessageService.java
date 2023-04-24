@@ -9,7 +9,7 @@ public interface MessageService {
 
     void saveMessage(Message msg);
 
-    void deleteAllByName(Message msg);
+    String deleteAllByName(Message msg);
 
     List<Messages> getAllByUserName(Message msg);
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,13 +45,15 @@ public class MessageServiceImpl implements MessageService {
      * @param msg
      */
     @Override
-    public void deleteAllByName(Message msg) {
+    public String deleteAllByName(Message msg) {
         var userName = msg.getChat().getUserName();
         if (userRepository.findByUserName(userName) != null) {
             messageRepository.deleteAllByName(userName);
             log.info(" delete all messages by  " + userName);
+            return "Сообщения удалены";
         }
         log.error(" not found messages by " + userName);
+        return "Сообщения не найдены";
     }
 
     /**
@@ -62,7 +65,7 @@ public class MessageServiceImpl implements MessageService {
         var userName = msg.getChat().getUserName();
         if (userRepository.findByUserName(userName) != null) {
             log.info(" found all messages by  " + userName);
-            return messageRepository.findAllByName(userName).stream().collect(Collectors.toList());
+            return new ArrayList<>(messageRepository.findAllByName(userName));
         } else {
             log.error(" not found messages by " + userName);
             return null;
