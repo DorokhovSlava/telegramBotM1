@@ -1,6 +1,9 @@
-package com.dorokhov.telegrambotm1.command;
+package com.dorokhov.telegrambotm1.command.commandImpl;
 
 
+import com.dorokhov.telegrambotm1.command.Command;
+import com.dorokhov.telegrambotm1.command.CommandDispatcher;
+import com.dorokhov.telegrambotm1.command.baseCommands.DefaultCommand;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

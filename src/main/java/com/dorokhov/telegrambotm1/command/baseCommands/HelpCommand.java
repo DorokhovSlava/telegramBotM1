@@ -1,5 +1,6 @@
-package com.dorokhov.telegrambotm1.command;
+package com.dorokhov.telegrambotm1.command.baseCommands;
 
+import com.dorokhov.telegrambotm1.command.Command;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -17,7 +18,7 @@ public class HelpCommand implements Command {
 
             Выберите /mydata - получить информацию о своём аккаунте и дату регистрации\s
 
-            Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации\s
+            Выберите /deletemydata - удалить информацию о своём аккаунте и дату регистрации\s
 
             Выберите /mymsg - получить информацию о своих сообщениях
             

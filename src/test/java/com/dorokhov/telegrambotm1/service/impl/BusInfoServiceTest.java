@@ -9,7 +9,6 @@ import java.net.URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BusInfoServiceTest {
-    com.dorokhov.telegrambotm1.service.BusInfoService service = new com.dorokhov.telegrambotm1.service.impl.BusInfoServiceImpl();
 
     @Test
     public void testGetBusInfo_returnsList() throws IOException {

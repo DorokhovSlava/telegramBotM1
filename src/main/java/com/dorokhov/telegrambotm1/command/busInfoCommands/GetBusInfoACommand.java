@@ -1,12 +1,11 @@
-package com.dorokhov.telegrambotm1.command;
+package com.dorokhov.telegrambotm1.command.busInfoCommands;
 
+import com.dorokhov.telegrambotm1.command.Command;
 import com.dorokhov.telegrambotm1.service.BusInfoService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
-
-import java.io.IOException;
 
 @Component
 public class GetBusInfoACommand implements Command {

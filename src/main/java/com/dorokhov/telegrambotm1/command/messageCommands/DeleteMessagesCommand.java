@@ -1,23 +1,24 @@
-package com.dorokhov.telegrambotm1.command;
+package com.dorokhov.telegrambotm1.command.messageCommands;
 
-import com.dorokhov.telegrambotm1.service.UserService;
+import com.dorokhov.telegrambotm1.command.Command;
+import com.dorokhov.telegrambotm1.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class GetDataCommand implements Command {
+public class DeleteMessagesCommand implements Command {
 
     @Autowired
-    private UserService userService;
+    private MessageService messageService;
 
     /**
-     * @param msg
+     * @param msg 
      * @return
      */
     @Override
     public String execute(Message msg) {
-        return userService.getUserInfo(msg);
+        return messageService.deleteAllByName(msg);
     }
 
     /**
@@ -25,7 +26,7 @@ public class GetDataCommand implements Command {
      */
     @Override
     public String commandId() {
-        return "/mydata";
+        return "/deletemsg";
     }
 
     /**
@@ -33,6 +34,6 @@ public class GetDataCommand implements Command {
      */
     @Override
     public String description() {
-        return "Получить информацию о пользователе бота ";
+        return "Удалить все сообщения пользователя";
     }
 }

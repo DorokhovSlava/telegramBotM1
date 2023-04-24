@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void registerUser(Message msg) {
+
         if (userRepository.findByChatId(msg.getChatId()) == null) {
             var chatId = msg.getChatId();
             var chat = msg.getChat();
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
             user.setFirstName(chat.getFirstName());
             user.setLastName(chat.getLastName());
             user.setUserName(chat.getUserName());
-            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
+            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()/1000));
 
             userRepository.save(user);
             log.info("user saved " + user);
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
         String answer;
         if (findUser != null) {
             log.info("info user by chatId: " + msg.getChatId());
-            return userRepository.findByChatId(msg.getChatId()).toString();
+            return findUser.toString();
         } else {
             answer = "Данные не найдены";
             log.error("not found user info by chatId: " + msg.getChatId());
@@ -67,8 +68,7 @@ public class UserServiceImpl implements UserService {
         User findUser = userRepository.findByChatId(msg.getChatId());
         String answer;
         if (findUser != null) {
-            Long userId = findUser.getId();
-            userRepository.deleteById(userId);
+            userRepository.deleteByChatId(msg.getChatId());
             answer = "Данные были удалены";
             log.info("info user by chatId: " + msg.getChatId() + "is deleted");
         } else {

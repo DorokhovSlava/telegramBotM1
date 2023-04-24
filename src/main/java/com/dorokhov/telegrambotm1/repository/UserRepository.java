@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,7 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByUserName(@Param("userName") String userName);
 
     @Modifying
-    @Query(value = "delete User u WHERE u.chatId =: chatId")
-    void deleteUserByChatId(@Param("chatId") Long chatId);
+    @Transactional
+    @Query(value = "DELETE User u WHERE u.chatId=:chatId")
+    void deleteByChatId(@Param("chatId") Long chatId);
 
 }

@@ -1,5 +1,6 @@
-package com.dorokhov.telegrambotm1.command;
+package com.dorokhov.telegrambotm1.command.baseCommands;
 
+import com.dorokhov.telegrambotm1.command.Command;
 import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
