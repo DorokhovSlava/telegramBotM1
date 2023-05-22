@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -37,6 +38,9 @@ public class User {
 
     @Column(name = "registered_at")
     private Timestamp registeredAt;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Messages> messages;
 
     @Override
     public String toString() {

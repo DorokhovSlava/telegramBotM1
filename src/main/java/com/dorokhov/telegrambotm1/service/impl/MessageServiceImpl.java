@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -31,11 +32,13 @@ public class MessageServiceImpl implements MessageService {
     public void saveMessage(Message msg) {
         var msgText = msg.getText();
         var userName = msg.getChat().getUserName();
+        var msgUser = userRepository.findByChatId(msg.getChatId());
 
         Messages messages = new Messages();
         messages.setTextMessage(msgText);
         messages.setUserName(userName);
         messages.setMessageDate(new Timestamp(System.currentTimeMillis()));
+        messages.setUser(msgUser);
 
         messageRepository.save(messages);
         log.info("message saved by chatId: " + msg.getChatId());
@@ -77,8 +80,9 @@ public class MessageServiceImpl implements MessageService {
      * @return List
      */
     @Override
-    public List<Messages> getByText(Message msg) {
+    public List<Messages> getByText(String text, Message msg) {
         var msgText = msg.getText();
-        return messageRepository.findAllByText(msgText);
+        Stream<Messages> messagesStream = messageRepository.findAllByText(msgText).stream().filter(o -> o.getTextMessage().equals(text));
+        return messagesStream.collect(Collectors.toList());
     }
 }

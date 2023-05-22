@@ -13,6 +13,6 @@ public interface MessageService {
 
     List<Messages> getAllByUserName(Message msg);
 
-    List<Messages> getByText(Message msg);
+    List<Messages> getByText(String text, Message msg);
 
 }

@@ -7,33 +7,33 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class GetMessagesCommand implements Command {
+public class GetMessagesByText implements Command {
 
     @Autowired
     private MessageService messageService;
 
     /**
-     * @param msg 
+     * @param msg
      * @return
      */
     @Override
     public String execute(Message msg) {
-        return messageService.getAllByUserName(msg).toString();
+        return messageService.getByText(msg.getText(), msg).toString();
     }
 
     /**
-     * @return 
+     * @return
      */
     @Override
     public String commandId() {
-        return "/mymessages";
+        return "/msgbytext";
     }
 
     /**
-     * @return 
+     * @return
      */
     @Override
     public String description() {
-        return "Получить все сообщения пользователя ";
+        return "Получить сообщения пользователя по совпадению текста ";
     }
 }
