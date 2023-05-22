@@ -26,7 +26,7 @@ public class DeleteMessagesCommand implements Command {
      */
     @Override
     public String commandId() {
-        return "/deletemsg";
+        return "/deletemymsg";
     }
 
     /**
