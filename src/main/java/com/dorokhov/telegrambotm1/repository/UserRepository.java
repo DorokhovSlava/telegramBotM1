@@ -8,18 +8,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "SELECT user FROM User user WHERE user.chatId=:chatId")
+    @Query(value = "SELECT user FROM User user WHERE user.chatId =: chatId")
     User findByChatId(@Param("chatId") Long chatId);
 
-    @Query(value = "SELECT user FROM User user WHERE user.userName=:userName")
-    User findByUserName(@Param("userName") String userName);
+    @Query(value = "SELECT user FROM User user WHERE user.userName =: userName")
+    Optional<User> findByUserName(String userName);
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE User u WHERE u.chatId=:chatId")
+    @Query(value = "DELETE User u WHERE u.chatId =: chatId")
     void deleteByChatId(@Param("chatId") Long chatId);
 
 }

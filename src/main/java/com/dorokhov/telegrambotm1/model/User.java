@@ -1,6 +1,5 @@
 package com.dorokhov.telegrambotm1.model;
 
-
 import lombok.*;
 import lombok.experimental.Accessors;
 

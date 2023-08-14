@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Component
 public class CommandDispatcherImpl implements CommandDispatcher {
 
-    private final static Map<String, Command> commandById = new HashMap<>();
+    private final Map<String, Command> commandById = new HashMap<>();
 
     @Override
     public Command dispatchById(String commandId) {
@@ -22,7 +22,8 @@ public class CommandDispatcherImpl implements CommandDispatcher {
 
     @Override
     public Map<String, String> allCommandDescriptionById() {
-        return commandById.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, (entry)-> entry.getValue().description()));
+        return commandById.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().description()));
     }
 
     @Override

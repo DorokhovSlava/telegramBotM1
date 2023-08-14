@@ -1,5 +1,6 @@
 package com.dorokhov.telegrambotm1.service.impl;
 
+import com.dorokhov.telegrambotm1.model.User;
 import com.dorokhov.telegrambotm1.repository.MessageRepository;
 import com.dorokhov.telegrambotm1.repository.UserRepository;
 import com.dorokhov.telegrambotm1.service.MessageService;
@@ -11,7 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public String deleteAllByName(Message msg) {
         var userName = msg.getChat().getUserName();
-        if (userRepository.findByUserName(userName) != null) {
+        if (userRepository.findByUserName(userName).isPresent()) {
             messageRepository.deleteAllByName(userName);
             log.info(" delete all messages by  " + userName);
             return "Сообщения удалены";
@@ -66,12 +69,13 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Messages> getAllByUserName(Message msg) {
         var userName = msg.getChat().getUserName();
-        if (userRepository.findByUserName(userName) != null) {
-            log.info(" found all messages by  " + userName);
+        Optional<User> user = userRepository.findByUserName(userName);
+        if (user.isPresent()) {
+            log.info("Found all messages by " + userName);
             return new ArrayList<>(messageRepository.findAllByName(userName));
         } else {
-            log.error(" not found messages by " + userName);
-            return null;
+            log.error("Not found messages by " + userName);
+            return Collections.emptyList();
         }
     }
 
