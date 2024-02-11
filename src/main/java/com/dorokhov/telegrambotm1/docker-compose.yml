@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16.1
+    container_name: telegrambotm1
+    environment:
+      POSTGRES_DB: bot-pg
+      POSTGRES_USER: hancer
+      POSTGRES_PASSWORD: 1qazxsw2
+    volumes:
+      - /полный/путь/к/текущей/директории:/docker-entrypoint-initdb.d
+    ports:
+      - "5431:5432"
