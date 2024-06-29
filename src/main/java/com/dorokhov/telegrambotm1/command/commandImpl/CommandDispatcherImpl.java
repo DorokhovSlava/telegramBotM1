@@ -23,7 +23,7 @@ public class CommandDispatcherImpl implements CommandDispatcher {
     @Override
     public Map<String, String> allCommandDescriptionById() {
         return commandById.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().description()));
+                .collect(Collectors.toMap(Map.Entry::getKey, (entry) -> entry.getValue().description()));
     }
 
     @Override

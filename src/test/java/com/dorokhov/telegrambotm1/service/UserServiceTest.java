@@ -42,12 +42,8 @@ class UserServiceTest {
                 .chatId(1L).build();
 
         message = new Message();
-        message.setChat(new Chat(1L, "test", "testTitle",
-                "firstName", "lastName", "testUser",
-                null, null, null, null,
-                null, null, null, null,
-                null, null, null, ((int) System.currentTimeMillis()),
-                null, null));
+        message.setChat(new Chat(1L, "test"
+        ));
     }
 
     @Test

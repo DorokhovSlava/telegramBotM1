@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerUser(Message msg) {
 
-        if (userRepository.findByChatId(msg.getChatId()) == null) {
-            var chatId = msg.getChatId();
+        var chatId = msg.getChat().getId();
+        if (userRepository.findByChatId(chatId) == null) {
             var chat = msg.getChat();
 
             User user = new User();

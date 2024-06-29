@@ -4,10 +4,8 @@ services:
     image: 'postgres:16.1'
     container_name: 'telegrambotm1'
     environment:
-      POSTGRES_DB: "bot-pg"
+      POSTGRES_DB: "telegrambotm1"
       POSTGRES_USER: "hancer"
       POSTGRES_PASSWORD: "1qazxsw2"
-    volumes:
-      - .:/docker-entrypoint-initdb.d
     ports:
       - "5431:5432"
