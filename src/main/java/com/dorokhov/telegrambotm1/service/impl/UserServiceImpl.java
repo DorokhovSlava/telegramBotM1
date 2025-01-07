@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Slf4j
 @Service
@@ -32,7 +34,7 @@ public class UserServiceImpl implements UserService {
             user.setFirstName(chat.getFirstName());
             user.setLastName(chat.getLastName());
             user.setUserName(chat.getUserName());
-            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()/1000));
+            user.setRegisteredAt(Timestamp.valueOf(LocalDateTime.now(ZoneOffset.UTC)));
 
             userRepository.save(user);
             log.info("user saved " + user);
