@@ -10,4 +10,6 @@ public interface UserService {
 
     String deleteUserInfo(Message msg);
 
+    String getUsersInfo();
+
 }

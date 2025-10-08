@@ -13,10 +13,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "SELECT user FROM User user WHERE user.chatId =: chatId")
-    User findByChatId(@Param("chatId") Long chatId);
+    @Query(value = "SELECT user FROM User user WHERE user.chatId =:chatId")
+    User findByChatId(Long chatId);
 
-    @Query(value = "SELECT user FROM User user WHERE user.userName =: userName")
+    @Query(value = "SELECT user FROM User user WHERE user.userName =:userName")
     Optional<User> findByUserName(String userName);
 
     @Modifying

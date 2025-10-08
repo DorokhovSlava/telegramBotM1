@@ -3,6 +3,7 @@ package com.dorokhov.telegrambotm1.service.impl;
 import com.dorokhov.telegrambotm1.model.User;
 import com.dorokhov.telegrambotm1.repository.MessageRepository;
 import com.dorokhov.telegrambotm1.repository.UserRepository;
+import com.dorokhov.telegrambotm1.service.AiChatClientService;
 import com.dorokhov.telegrambotm1.service.MessageService;
 import com.dorokhov.telegrambotm1.model.Messages;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AiChatClientService aiChatClientService;
+
     /**
      * @param msg
      */
@@ -45,6 +49,16 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(messages);
         log.info("message saved by chatId: " + msg.getChatId());
+    }
+
+    @Override
+    public String processMessageWithAI(Message msg, Long chatId) {
+        if (chatId != null) {
+            saveMessage(msg);
+        }
+
+        String text = msg.getText();
+        return aiChatClientService.sendMessage(text, chatId);
     }
 
     /**

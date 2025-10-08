@@ -1,10 +1,9 @@
 package com.dorokhov.telegrambotm1.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
-
-import javax.persistence.*;
 
 @Data
 @Getter

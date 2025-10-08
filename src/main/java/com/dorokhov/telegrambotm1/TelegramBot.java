@@ -1,17 +1,14 @@
 package com.dorokhov.telegrambotm1;
 
-import com.dorokhov.telegrambotm1.command.Command;
-import com.dorokhov.telegrambotm1.command.CommandDispatcher;
 import com.dorokhov.telegrambotm1.config.BotConfiguration;
 import com.dorokhov.telegrambotm1.service.MessageService;
+import com.dorokhov.telegrambotm1.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -19,80 +16,114 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-@ComponentScan
-@Component
 @Slf4j
+@Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private final CommandDispatcher commandDispatcher;
+    private final BotConfiguration configuration;
+    private final UserService userService;
     private final MessageService messageService;
-    final BotConfiguration configuration;
+
+    static final String HELP_TEXT = "Этот бот позволяет принимать и отправлять сообщения под средством команд в меню и через ввод, " +
+            "а так же сохранять и удалять информацию о запросах и пользователях. \n \n"
+            + "VERSION MARK1 \n\n"
+            + "Выберите /start - чтобы начать работу и получить приветвтвенное сообщение\n\n"
+            + "Выберите /help - чтобы получить эту справочную информацию ещё раз \n\n"
+            + "Выберите /mydata - получить информацию о своём аккаунте и дату регистрации \n\n"
+            + "Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации \n\n"
+            + "Просто введите сообщение - чтобы отправить сообщение нейросети и получить ответ \n\n";
 
     @Autowired
-    public TelegramBot(CommandDispatcher commandDispatcher, MessageService messageService, BotConfiguration configuration) {
-        this.commandDispatcher = commandDispatcher;
-        this.messageService = messageService;
+    public TelegramBot(BotConfiguration configuration,
+                       UserService userService,
+                       MessageService messageService) {
         this.configuration = configuration;
-        // Menu of commands
+        this.userService = userService;
+        this.messageService = messageService;
+
+        initializeMenuCommands();
+    }
+
+    private void initializeMenuCommands() {
         List<BotCommand> listOfCommands = new ArrayList<>();
-        Map<String, String> descriptionByKey = commandDispatcher.allCommandDescriptionById();
-        Set<String> keys = descriptionByKey.keySet();
-        for (String key : keys) {
-            listOfCommands.add(new BotCommand(key, descriptionByKey.get(key)));
-        }
+        listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
+        listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
+        listOfCommands.add(new BotCommand("/deletedata", "удаление истории и информации"));
+        listOfCommands.add(new BotCommand("/help", "информация о боте"));
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
-            log.error("Error command list: " + e.getMessage());
+            log.error("Error command list: {}", e.getMessage());
         }
     }
 
-    /**
-     * @return register name
-     */
     @Override
     public String getBotUsername() {
         return configuration.getBotName();
     }
 
-    /**
-     * @return register token
-     */
     @Override
     public String getBotToken() {
         return configuration.getBotToken();
     }
 
+    @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            Message msg = update.getMessage();
+            String messageText = update.getMessage().getText();
+            long chatId = update.getMessage().getChat().getId();
 
-            String messageText = msg.getText();
-            long chatId = msg.getChatId();
+            switch (messageText) {
+                case "/start":
+                    userService.registerUser(update.getMessage());
+                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                    break;
 
-            Command command = commandDispatcher.dispatchById(messageText);
-            String answer = command.execute(msg);
+                case "/help":
+                    sendMessage(chatId, HELP_TEXT);
+                    break;
 
-            sendMessage(chatId, answer);
-            messageService.saveMessage(msg);
+                case "/mydata":
+                    String userInfo = userService.getUserInfo(update.getMessage());
+                    sendMessage(chatId, userInfo);
+                    break;
+
+                case "/deletedata":
+                    String deleteResult = userService.deleteUserInfo(update.getMessage());
+                    sendMessage(chatId, deleteResult);
+                    break;
+
+                default:
+                    // Обработка AI сообщений
+                    try {
+                        String aiResponse = messageService.processMessageWithAI(update.getMessage(), chatId);
+                        sendMessage(chatId, aiResponse);
+                    } catch (Exception e) {
+                        log.error("AI processing error: {}", e.getMessage());
+                        sendMessage(chatId, "Извините, произошла ошибка при обработке запроса. Попробуйте позже.");
+                    }
+                    break;
+            }
         }
     }
 
-    /**
-     * Method send message
-     */
-    public void sendMessage(long chatId, String textMessage) {
+    private void startCommandReceived(long chatId, String userName) {
+        String answer = "Привет, " + userName + ", рад тебя видеть!";
+        sendMessage(chatId, answer);
+        log.info("Message send to user: {}", userName);
+    }
+
+    private void sendMessage(long chatId, String textMessage) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
-        log.info(message.toString());
+
         try {
-            this.execute(message);
+            execute(message);
+            log.info("Message sent to chatId: {}", chatId);
         } catch (TelegramApiException e) {
-            log.error("Error occurred: " + e.getMessage());
+            log.error("Error sending message: {}", e.getMessage());
         }
     }
 }

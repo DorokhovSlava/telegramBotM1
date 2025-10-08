@@ -1,9 +1,9 @@
 package com.dorokhov.telegrambotm1.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Set;
 

@@ -22,22 +22,22 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void registerUser(Message msg) {
+        Long chatId = msg.getChat().getId();
+        var chat = msg.getChat();
 
-        if (userRepository.findByChatId(msg.getChatId()) == null) {
-            var chatId = msg.getChatId();
-            var chat = msg.getChat();
+        if (userRepository.findByChatId(chatId) == null) {
 
             User user = new User();
             user.setChatId(chatId);
             user.setFirstName(chat.getFirstName());
             user.setLastName(chat.getLastName());
             user.setUserName(chat.getUserName());
-            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()/1000));
+            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
 
             userRepository.save(user);
-            log.info("user saved " + user);
+            log.info("user saved {}", user);
         } else {
-            log.error("user already exists by chatId: " + msg.getChatId());
+            log.error("user already exists by chatId: {}", msg.getChatId());
         }
     }
 
@@ -50,11 +50,11 @@ public class UserServiceImpl implements UserService {
         User findUser = userRepository.findByChatId(msg.getChatId());
         String answer;
         if (findUser != null) {
-            log.info("info user by chatId: " + msg.getChatId());
+            log.info("info user by chatId: {}", msg.getChatId());
             return findUser.toString();
         } else {
             answer = "Данные не найдены";
-            log.error("not found user info by chatId: " + msg.getChatId());
+            log.error("not found user info by chatId: {}", msg.getChatId());
             return answer;
         }
     }
@@ -70,11 +70,21 @@ public class UserServiceImpl implements UserService {
         if (findUser != null) {
             userRepository.deleteByChatId(msg.getChatId());
             answer = "Данные были удалены";
-            log.info("info user by chatId: " + msg.getChatId() + "is deleted");
+            log.info("info user by chatId: {}is deleted", msg.getChatId());
         } else {
             answer = "Данные не найдены";
-            log.error("user info by chatId: " + msg.getChatId() + " not found");
+            log.error("user info by chatId: {} not found", msg.getChatId());
         }
         return answer;
+    }
+
+    @Override
+    public String getUsersInfo() {
+        if (userRepository.findAll().isEmpty()) {
+            String answer = userRepository.findAll().toString();
+            return answer;
+        }
+        log.error("not found users info ");
+        return null;
     }
 }
