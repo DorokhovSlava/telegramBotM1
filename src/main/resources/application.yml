@@ -2,6 +2,14 @@ spring:
   profiles:
     active: "@activeProfile"
   liquibase:
-    change-log: classpath:db/db.changelog-master.xml
+    change-log: db/db.changelog-master.xml
     enabled: true
     liquibase-schema: public
+
+  spring:
+    ai:
+      ollama:
+        base-url: http://localhost:11434
+        chat:
+          options:
+            model: llama3

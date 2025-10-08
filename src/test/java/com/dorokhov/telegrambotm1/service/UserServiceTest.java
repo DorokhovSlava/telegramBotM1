@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -22,7 +21,6 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 class UserServiceTest {
 
-    @MockBean
     private UserRepository userRepository;
 
     @Mock
@@ -42,12 +40,8 @@ class UserServiceTest {
                 .chatId(1L).build();
 
         message = new Message();
-        message.setChat(new Chat(1L, "test", "testTitle",
-                "firstName", "lastName", "testUser",
-                null, null, null, null,
-                null, null, null, null,
-                null, null, null, ((int) System.currentTimeMillis()),
-                null, null));
+        message.setChat(new Chat(1L, "test"
+        ));
     }
 
     @Test

@@ -15,6 +15,9 @@ public interface MessageRepository extends JpaRepository<Messages, Long> {
     @Query("SELECT msg FROM Messages msg WHERE msg.userName=:userName")
     List<Messages> findAllByName(String userName);
 
+    @Query("SELECT msg FROM Messages msg WHERE msg.user.chatId=:chatId")
+    List<Messages> findAllByChatId(Long chatId);
+
     @Query("SELECT msg FROM Messages msg WHERE msg.textMessage=:msgText")
     List<Messages> findAllByText(String msgText);
 

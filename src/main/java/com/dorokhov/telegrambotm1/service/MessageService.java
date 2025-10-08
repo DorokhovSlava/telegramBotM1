@@ -9,6 +9,8 @@ public interface MessageService {
 
     void saveMessage(Message msg);
 
+    String processMessageWithAI(Message msg, Long chatId);
+
     String deleteAllByName(Message msg);
 
     List<Messages> getAllByUserName(Message msg);

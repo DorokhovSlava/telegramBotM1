@@ -3,31 +3,32 @@ package com.dorokhov.telegrambotm1.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "messages")
+@Table(name = "ai_response")
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class Messages {
+public class AIRespose {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "msg_text")
-    private String textMessage;
+    @Column(name = "text_resp")
+    private String textResponse;
 
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "msg_date")
-    private Timestamp messageDate;
+    @Column(name = "resp_date")
+    private Timestamp responseDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -37,9 +38,10 @@ public class Messages {
     public String toString() {
         return " \n Messages{" +
                 "id=" + id +
-                ", textMessage='" + textMessage + '\'' +
+                ", textResponse='" + textResponse + '\'' +
                 ", userName='" + userName + '\'' +
-                ", messageDate=" + messageDate + '\'' +
+                ", messageDate=" + responseDate + '\'' +
                 '}';
     }
+
 }
