@@ -22,5 +22,5 @@ public interface AiChatClientService {
      */
     Map<String, Object> analyzeMessage(String message);
 
-    void saveResponse (String response, User user);
+    void saveResponse (String response, String request, User user);
 }

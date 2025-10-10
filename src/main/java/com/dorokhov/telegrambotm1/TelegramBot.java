@@ -31,7 +31,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             + "Выберите /start - чтобы начать работу и получить приветвтвенное сообщение\n\n"
             + "Выберите /help - чтобы получить эту справочную информацию ещё раз \n\n"
             + "Выберите /mydata - получить информацию о своём аккаунте и дату регистрации \n\n"
-            + "Выберите /deletedata - удалить информацию о своём аккаунте и дату регистрации \n\n"
+            + "Выберите /deletecontext - удаление истории и контекста \n\n"
             + "Просто введите сообщение - чтобы отправить сообщение нейросети и получить ответ \n\n";
 
     @Autowired
@@ -49,7 +49,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "начало работы, приветствие"));
         listOfCommands.add(new BotCommand("/mydata", "информация о пользователе, история запросов"));
-        listOfCommands.add(new BotCommand("/deletedata", "удаление истории и информации"));
+        listOfCommands.add(new BotCommand("/deletecontext", "удаление истории и контекста"));
         listOfCommands.add(new BotCommand("/help", "информация о боте"));
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
@@ -89,13 +89,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(chatId, userInfo);
                     break;
 
-                case "/deletedata":
+                case "/deletecontext":
                     String deleteResult = userService.deleteUserInfo(update.getMessage());
                     sendMessage(chatId, deleteResult);
                     break;
 
                 default:
-                    // Обработка AI сообщений
                     try {
                         String aiResponse = messageService.processMessageWithAI(update.getMessage(), chatId);
                         sendMessage(chatId, aiResponse);
