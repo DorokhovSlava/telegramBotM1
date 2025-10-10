@@ -63,7 +63,7 @@ public class AiChatClientServiceImpl implements AiChatClientService {
                             RESPONSE GUIDELINES:
                             - Consider the full conversation context
                             - Continue ongoing topics naturally
-                            - Respond concisely (1-3 sentences)
+                            - Respond concisely (1-6 sentences)
                             - Maintain friendly and helpful tone
                             - Use natural, conversational Russian
                             - Avoid repeating previous responses
@@ -83,7 +83,7 @@ public class AiChatClientServiceImpl implements AiChatClientService {
                     .getResult()
                     .getOutput().getContent();
 
-            saveResponse(response, user);
+            saveResponse(response, message, user);
             log.info("Received AI response: {}", response);
             return response;
 
@@ -133,10 +133,11 @@ public class AiChatClientServiceImpl implements AiChatClientService {
     }
 
     @Override
-    public void saveResponse(String response, User user) {
+    public void saveResponse(String response, String request, User user) {
 
         AIRespose aiRespose = new AIRespose();
         aiRespose.setTextResponse(response);
+        aiRespose.setTextRequest(request);
         aiRespose.setUserName(user.getUserName());
         aiRespose.setResponseDate(new Timestamp(System.currentTimeMillis()));
         aiRespose.setUser(user);

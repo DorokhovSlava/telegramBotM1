@@ -8,7 +8,8 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="text_resp" type="VARCHAR(1500)"/>
+            <column name="text_resp" type="VARCHAR"/>
+            <column name="text_request" type="VARCHAR"/>
             <column name="user_name" type="VARCHAR(60)"/>
             <column name="resp_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="user_id" type="BIGINT">

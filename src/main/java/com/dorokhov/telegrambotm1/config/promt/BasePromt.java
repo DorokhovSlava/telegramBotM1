@@ -1,13 +1,11 @@
 package com.dorokhov.telegrambotm1.config.promt;
 
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+@Getter
 @Component
 public class BasePromt {
-
-    public String getBasePromt1() {
-        return basePromt1;
-    }
 
     final String basePromt1 = String.format("""
             You are NeoAssistant, a sophisticated AI companion designed for natural and engaging conversations in Russian. Your primary goal is to provide meaningful, context-aware interactions while maintaining appropriate boundaries.

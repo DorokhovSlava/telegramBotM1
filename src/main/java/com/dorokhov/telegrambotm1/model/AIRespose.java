@@ -24,6 +24,9 @@ public class AIRespose {
     @Column(name = "text_resp")
     private String textResponse;
 
+    @Column(name = "text_request")
+    private String textRequest;
+
     @Column(name = "user_name")
     private String userName;
 
@@ -39,6 +42,7 @@ public class AIRespose {
         return " \n Messages{" +
                 "id=" + id +
                 ", textResponse='" + textResponse + '\'' +
+                ", textRequest='" + textRequest + '\'' +
                 ", userName='" + userName + '\'' +
                 ", messageDate=" + responseDate + '\'' +
                 '}';
