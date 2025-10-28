@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,12 +48,12 @@ class UserServiceTest {
     @Test
     void registerUser() {
         userService.registerUser(message);
-        when(userRepository.findByChatId(message.getChatId())).thenReturn(testUser);
+        when(userRepository.findByChatId(message.getChatId())).thenReturn(Optional.ofNullable(testUser));
     }
 
     @Test
     void getUserInfo() {
-        when(userRepository.findByChatId(message.getChatId())).thenReturn(testUser);
+        when(userRepository.findByChatId(message.getChatId())).thenReturn(Optional.ofNullable(testUser));
     }
 
     @Test

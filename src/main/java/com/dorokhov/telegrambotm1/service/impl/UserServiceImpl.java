@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService {
         Long chatId = msg.getChat().getId();
         var chat = msg.getChat();
 
-        if (userRepository.findByChatId(chatId) == null) {
+        if (userRepository.findByChatId(chatId).isEmpty()) {
 
             User user = new User();
             user.setChatId(chatId);
@@ -47,9 +48,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String getUserInfo(Message msg) {
-        User findUser = userRepository.findByChatId(msg.getChatId());
+        Optional<User> findUser = userRepository.findByChatId(msg.getChatId());
         String answer;
-        if (findUser != null) {
+        if (findUser.isPresent()) {
             log.info("info user by chatId: {}", msg.getChatId());
             return findUser.toString();
         } else {
@@ -65,9 +66,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String deleteUserInfo(Message msg) {
-        User findUser = userRepository.findByChatId(msg.getChatId());
+        Optional<User> findUser = userRepository.findByChatId(msg.getChatId());
         String answer;
-        if (findUser != null) {
+        if (findUser.isPresent()) {
             userRepository.deleteByChatId(msg.getChatId());
             answer = "Данные были удалены";
             log.info("info user by chatId: {}is deleted", msg.getChatId());

@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   postgres:
-    image: postgres:13.3
+    image: postgres:16
     environment:
       POSTGRES_DB: "tg_bot"
       POSTGRES_USER: "postgres"
@@ -10,14 +10,3 @@ services:
       - .:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
-
-  ollama:
-    image: ai/llama3.2:latest
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-      - ./model_files:/model_files
-    entrypoint: ["/bin/sh", "/model_files/run_ollama.sh"]
-    restart: unless-stopped

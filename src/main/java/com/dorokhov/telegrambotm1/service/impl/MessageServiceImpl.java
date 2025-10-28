@@ -39,13 +39,13 @@ public class MessageServiceImpl implements MessageService {
     public void saveMessage(Message msg) {
         var msgText = msg.getText();
         var userName = msg.getChat().getUserName();
-        var msgUser = userRepository.findByChatId(msg.getChatId());
+        Optional<User> msgUser = userRepository.findByChatId(msg.getChatId());
 
         Messages messages = new Messages();
         messages.setTextMessage(msgText);
         messages.setUserName(userName);
         messages.setMessageDate(new Timestamp(System.currentTimeMillis()));
-        messages.setUser(msgUser);
+        messages.setUser(msgUser.orElse(null));
 
         messageRepository.save(messages);
         log.info("message saved by chatId: " + msg.getChatId());
@@ -66,13 +66,15 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public String deleteAllByName(Message msg) {
-        var userName = msg.getChat().getUserName();
-        if (userRepository.findByUserName(userName).isPresent()) {
+        var userChatId = msg.getChatId();
+        Optional<User> msgUser = userRepository.findByChatId(userChatId);
+        if (msgUser.isPresent()) {
+            var userName = msgUser.get().getUserName();
             messageRepository.deleteAllByName(userName);
             log.info(" delete all messages by  " + userName);
             return "Сообщения удалены";
         }
-        log.error(" not found messages by " + userName);
+        log.error(" not found messages by " + userChatId);
         return "Сообщения не найдены";
     }
 

@@ -26,7 +26,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final MessageService messageService;
 
     static final String HELP_TEXT = "Этот бот позволяет принимать и отправлять сообщения под средством команд в меню и через ввод, " +
-            "а так же сохранять и удалять информацию о запросах и пользователях. \n \n"
+            "а так же сохранять и удалять информацию о запросах и пользователях. \n\n"
             + "VERSION MARK1 \n\n"
             + "Выберите /start - чтобы начать работу и получить приветвтвенное сообщение\n\n"
             + "Выберите /help - чтобы получить эту справочную информацию ещё раз \n\n"
@@ -90,7 +90,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
 
                 case "/deletecontext":
-                    String deleteResult = userService.deleteUserInfo(update.getMessage());
+                    String deleteResult = messageService.deleteAllByName(update.getMessage());
                     sendMessage(chatId, deleteResult);
                     break;
 

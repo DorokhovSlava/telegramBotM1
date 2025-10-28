@@ -1,13 +1,14 @@
 package com.dorokhov.telegrambotm1.service.impl;
 
-import com.dorokhov.telegrambotm1.config.promt.BasePromt;
-import com.dorokhov.telegrambotm1.model.AIRespose;
+import com.dorokhov.telegrambotm1.config.promt.BasePrompt;
+import com.dorokhov.telegrambotm1.model.AIResponse;
 import com.dorokhov.telegrambotm1.model.Messages;
 import com.dorokhov.telegrambotm1.model.User;
-import com.dorokhov.telegrambotm1.repository.AIResposeRepository;
+import com.dorokhov.telegrambotm1.repository.AIResponseRepository;
 import com.dorokhov.telegrambotm1.repository.MessageRepository;
 import com.dorokhov.telegrambotm1.repository.UserRepository;
 import com.dorokhov.telegrambotm1.service.AiChatClientService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -25,19 +26,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AiChatClientServiceImpl implements AiChatClientService {
 
-    private final OllamaChatModel chatClient;
+    private final OllamaChatModel chatModel;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
-    private final AIResposeRepository aiResposeRepository;
-    private final BasePromt basePromt;
+    private final AIResponseRepository aiResponseRepository;
+    private final BasePrompt basePrompt;
+    //private final VectorStore vectorStore;
 
     @Override
     public String sendMessage(String message, Long chatId) {
         log.info("Sending message to AI: {}", message);
 
-        User user = userRepository.findByChatId(chatId);
+        Optional<User> user = userRepository.findByChatId(chatId);
 
-        String systemPrompt = basePromt.getBasePromt1();
+        String systemPrompt = basePrompt.getBasePrompt();
 
         try {
             List<Messages> messageContext = messageRepository.findAllByChatId(chatId);
@@ -53,22 +55,13 @@ public class AiChatClientServiceImpl implements AiChatClientService {
                     .collect(Collectors.joining("\n"));
 
             String enhancedPrompt = String.format("""
+                            SYSTEM PROMPT:
                             %s
                             
                             CONVERSATION CONTEXT:
                             %s
                             
                             CURRENT USER MESSAGE: %s
-                            
-                            RESPONSE GUIDELINES:
-                            - Consider the full conversation context
-                            - Continue ongoing topics naturally
-                            - Respond concisely (1-6 sentences)
-                            - Maintain friendly and helpful tone
-                            - Use natural, conversational Russian
-                            - Avoid repeating previous responses
-                            - Ask clarifying questions when needed
-                            - Respond as you would to a friend in a chat
                             """,
                     systemPrompt,
                     context.isEmpty() ? "This is the beginning of the dialogue." : context,
@@ -79,11 +72,11 @@ public class AiChatClientServiceImpl implements AiChatClientService {
             UserMessage userMessage = new UserMessage(message);
             Prompt prompt = new Prompt(Arrays.asList(systemMessage, userMessage));
 
-            var response = chatClient.call(prompt)
+            var response = chatModel.call(prompt)
                     .getResult()
                     .getOutput().getContent();
 
-            saveResponse(response, message, user);
+            saveResponse(response, message, user.orElse(null));
             log.info("Received AI response: {}", response);
             return response;
 
@@ -111,7 +104,7 @@ public class AiChatClientServiceImpl implements AiChatClientService {
         var promt = new Prompt("Ты полезный AI ассистент в Telegram боте. Отвечай кратко и по делу.");
 
         try {
-            var response = chatClient.call(promt)
+            var response = chatModel.call(promt)
                     .getResult()
                     .getOutput().getContent();
 
@@ -133,16 +126,16 @@ public class AiChatClientServiceImpl implements AiChatClientService {
     }
 
     @Override
-    public void saveResponse(String response, String request, User user) {
+    public void saveResponse(String response, String request, @NonNull User user) {
 
-        AIRespose aiRespose = new AIRespose();
-        aiRespose.setTextResponse(response);
-        aiRespose.setTextRequest(request);
-        aiRespose.setUserName(user.getUserName());
-        aiRespose.setResponseDate(new Timestamp(System.currentTimeMillis()));
-        aiRespose.setUser(user);
+        AIResponse aIResponse = new AIResponse();
+        aIResponse.setTextResponse(response);
+        aIResponse.setTextRequest(request);
+        aIResponse.setUserName(user.getUserName());
+        aIResponse.setResponseDate(new Timestamp(System.currentTimeMillis()));
+        aIResponse.setUser(user);
 
-        aiResposeRepository.save(aiRespose);
+        aiResponseRepository.save(aIResponse);
         log.info("Saving response: {}", response);
     }
 

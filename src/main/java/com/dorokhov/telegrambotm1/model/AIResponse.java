@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class AIRespose {
+public class AIResponse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class AIRespose {
 
     @Override
     public String toString() {
-        return " \n Messages{" +
+        return "AIResponse{" +
                 "id=" + id +
                 ", textResponse='" + textResponse + '\'' +
                 ", textRequest='" + textRequest + '\'' +

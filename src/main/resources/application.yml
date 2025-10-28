@@ -1,15 +1,72 @@
 spring:
-  profiles:
-    active: "@activeProfile"
-  liquibase:
-    change-log: db/db.changelog-master.xml
-    enabled: true
-    liquibase-schema: public
+  application:
+    name: model_M2_bot
 
-  spring:
-    ai:
-      ollama:
-        base-url: http://localhost:11434
-        chat:
-          options:
-            model: llama3
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tg_bot
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/db.changelog-master.xml
+    default-schema: public
+
+  sql:
+    init:
+      mode: never
+
+  cache:
+    type: simple
+    cache-names: gameContext,userSessions
+
+  main:
+    allow-bean-definition-overriding: true
+
+  autoconfigure:
+    exclude: org.springframework.ai.autoconfigure.vectorstore.qdrant.QdrantVectorStoreAutoConfiguration
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: dagbs/deepseek-coder-v2-lite-instruct:q3_k_m
+          temperature: 0.6
+          num-predict: 550
+          num-ctx: 4096
+          num-thread: 6
+          top-k: 40
+          top-p: 0.9
+          repeat-penalty: 1.1
+          repeat-last-n: 164
+          num-batch: 512
+      init:
+        timeout: 1m
+      embedding:
+        model: nomic-embed-text:latest
+    vector store:
+      qdrant:
+        host: localhost
+        port: 6334
+        collection-name: dungeon-knowledge
+        initialize-schema: true
+
+bot:
+  name: model_M2_bot
+  token: ${BOT_TOKEN:5586689607:AAGsN7NqnVJg5MFMkKiLtsT_fyUkA4jqE8Q}
